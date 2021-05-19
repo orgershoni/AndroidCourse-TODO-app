@@ -9,15 +9,38 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
   public TodoItemsHolder holder = null;
+  private String currentDescription;
+  private static final String DESCRIPTION  = "description";
+  private static final String HOLDER  = "holder";
+
+  List<TodoItem> items;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    TextView taskDescView = findViewById(R.id.editTextInsertTask);
+    View fabToAddTask = findViewById(R.id.buttonCreateTodoItem);
+    RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList);
+
+    if (savedInstanceState != null)
+    {
+      taskDescView.setText(savedInstanceState.getString(DESCRIPTION));
+      holder = (TodoItemsHolder) savedInstanceState.getSerializable(HOLDER);
+    }
+    else
+    {
+      taskDescView.setText("");
+    }
 
     if (holder == null) {
       holder = new TodoItemsHolderImpl();
@@ -25,6 +48,46 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: implement the specs as defined below
     //    (find all UI components, hook them up, connect everything you need)
+
+
+    items = holder.getCurrentItems();
+    TodoItemAdapter adapter = new TodoItemAdapter();
+    adapter.onCheckClickCallback = (TodoItem todoItem)->{
+      holder.changeStatus(todoItem);
+      adapter.setItems(holder.getCurrentItems());
+    };
+    adapter.onDeleteClickCallback = (TodoItem todoItem)->{
+      holder.deleteItem(todoItem);
+      adapter.setItems(holder.getCurrentItems());
+    };
+
+    adapter.setItems(items);
+    recyclerView.setAdapter(adapter);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
+    fabToAddTask.setOnClickListener((View v)-> {
+        if (!(taskDescView.getText().toString().equals("")))
+        {
+          holder.addNewInProgressItem(taskDescView.getText().toString());
+          adapter.setItems(holder.getCurrentItems());
+          taskDescView.setText("");
+        }
+    });
+
+
+
+
+
+
+  }
+
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+
+    outState.putString(DESCRIPTION, currentDescription);
+    outState.putSerializable(HOLDER, holder);
   }
 }
 
