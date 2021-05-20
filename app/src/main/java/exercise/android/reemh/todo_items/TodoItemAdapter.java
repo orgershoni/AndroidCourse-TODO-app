@@ -7,9 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +33,11 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoSingleItemHolder> 
         }
         this.items.clear();
         this.items.addAll(items);
+
         notifyDataSetChanged();
     }
+
+
 
     @Override
     public TodoSingleItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -67,8 +73,6 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoSingleItemHolder> 
                 onChangeCallback.onChange();
             }
         });
-
-
     }
 
     @Override

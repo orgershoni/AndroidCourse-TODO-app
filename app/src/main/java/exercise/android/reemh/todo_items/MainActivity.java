@@ -1,23 +1,18 @@
 package exercise.android.reemh.todo_items;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-  public TodoItemsHolder holder = null;
-  private String currentDescription;
+  public TodoItemsDataBase holder = null;
   private static final String DESCRIPTION  = "description";
   private static final String HOLDER  = "holder";
 
@@ -35,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     if (savedInstanceState != null)
     {
       taskDescView.setText(savedInstanceState.getString(DESCRIPTION));
-      holder = (TodoItemsHolder) savedInstanceState.getSerializable(HOLDER);
+      holder = (TodoItemsDataBase) savedInstanceState.getSerializable(HOLDER);
     }
     else
     {
@@ -43,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     if (holder == null) {
-      holder = new TodoItemsHolderImpl();
+      holder = new TodoItemsDataBaseImpl();
     }
 
     // TODO: implement the specs as defined below
@@ -55,24 +50,18 @@ public class MainActivity extends AppCompatActivity {
     adapter.onCheckClickCallback = (TodoItem todoItem)->holder.changeStatus(todoItem);
     adapter.onDeleteClickCallback = (TodoItem todoItem)-> holder.deleteItem(todoItem);
     adapter.onChangeCallback = () -> adapter.setItems(holder.getCurrentItems());
-
     adapter.setItems(items);
     recyclerView.setAdapter(adapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
     fabToAddTask.setOnClickListener((View v)-> {
-        if (!(taskDescView.getText().toString().equals("")))
+        if (!(taskDescView.getText().toString().isEmpty()))
         {
           holder.addNewInProgressItem(taskDescView.getText().toString());
           adapter.setItems(holder.getCurrentItems());
           taskDescView.setText("");
         }
     });
-
-
-
-
-
 
   }
 
@@ -81,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
 
-    outState.putString(DESCRIPTION, currentDescription);
+    TextView taskDescView = findViewById(R.id.editTextInsertTask);
+    outState.putString(DESCRIPTION, taskDescView.getText().toString());
     outState.putSerializable(HOLDER, holder);
   }
 }

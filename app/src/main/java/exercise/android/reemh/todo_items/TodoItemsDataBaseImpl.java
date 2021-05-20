@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TodoItemsHolderImpl implements TodoItemsHolder {
+public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   List<TodoItem> items;
   Integer additionCounter;
   Integer doneCounter;
 
-  TodoItemsHolderImpl(){
+  TodoItemsDataBaseImpl(){
     items = new ArrayList<>();
     additionCounter = 0;
     doneCounter = 0;

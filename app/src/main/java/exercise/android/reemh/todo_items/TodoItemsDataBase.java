@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public interface TodoItemsHolder extends Serializable  {
+public interface TodoItemsDataBase extends Serializable  {
 
   /** Get a copy of the current items list */
   List<TodoItem> getCurrentItems();

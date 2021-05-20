@@ -25,11 +25,11 @@ import static org.mockito.ArgumentMatchers.eq;
 public class MainActivityTest extends TestCase {
 
   private ActivityController<MainActivity> activityController;
-  private TodoItemsHolder mockHolder;
+  private TodoItemsDataBase mockHolder;
 
   @Before
   public void setup(){
-    mockHolder = Mockito.mock(TodoItemsHolder.class);
+    mockHolder = Mockito.mock(TodoItemsDataBase.class);
     // when asking the `mockHolder` to get the current items, return an empty list
     Mockito.when(mockHolder.getCurrentItems())
       .thenReturn(new ArrayList<>());
@@ -101,7 +101,7 @@ public class MainActivityTest extends TestCase {
     ArrayList<TodoItem> itemsReturnedByHolder = new ArrayList<>();
     Mockito.when(mockHolder.getCurrentItems())
       .thenReturn(itemsReturnedByHolder);
-    TodoItem itemInProgress = new TodoItem();
+    TodoItem itemInProgress = new TodoItem("do homework", 0);
     // TODO: customize `itemInProgress` to have type IN-PROGRESS and description "do homework"
     itemsReturnedByHolder.add(itemInProgress);
 
@@ -133,7 +133,8 @@ public class MainActivityTest extends TestCase {
     ArrayList<TodoItem> itemsReturnedByHolder = new ArrayList<>();
     Mockito.when(mockHolder.getCurrentItems())
       .thenReturn(itemsReturnedByHolder);
-    TodoItem itemDone = new TodoItem();
+    TodoItem itemDone = new TodoItem("buy tomatoes", 0);
+    itemDone.setDone(0);
     // TODO: customize `itemDone` to have type DONE and description "buy tomatoes"
     itemsReturnedByHolder.add(itemDone);
 
