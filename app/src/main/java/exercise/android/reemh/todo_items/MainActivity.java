@@ -52,14 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     items = holder.getCurrentItems();
     TodoItemAdapter adapter = new TodoItemAdapter();
-    adapter.onCheckClickCallback = (TodoItem todoItem)->{
-      holder.changeStatus(todoItem);
-      adapter.setItems(holder.getCurrentItems());
-    };
-    adapter.onDeleteClickCallback = (TodoItem todoItem)->{
-      holder.deleteItem(todoItem);
-      adapter.setItems(holder.getCurrentItems());
-    };
+    adapter.onCheckClickCallback = (TodoItem todoItem)->holder.changeStatus(todoItem);
+    adapter.onDeleteClickCallback = (TodoItem todoItem)-> holder.deleteItem(todoItem);
+    adapter.onChangeCallback = () -> adapter.setItems(holder.getCurrentItems());
 
     adapter.setItems(items);
     recyclerView.setAdapter(adapter);

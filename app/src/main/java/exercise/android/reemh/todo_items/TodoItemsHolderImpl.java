@@ -2,40 +2,41 @@ package exercise.android.reemh.todo_items;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 public class TodoItemsHolderImpl implements TodoItemsHolder {
 
-  HashSet<TodoItem> items;
-  Integer counter;
+  List<TodoItem> items;
+  Integer additionCounter;
+  Integer doneCounter;
 
   TodoItemsHolderImpl(){
-    items = new HashSet<>();
-    counter = 0;
+    items = new ArrayList<>();
+    additionCounter = 0;
+    doneCounter = 0;
   }
 
   @Override
   public List<TodoItem> getCurrentItems() {
-    List<TodoItem> asList = new ArrayList<>(items);
-    Collections.sort(asList);
-    return asList;
+    Collections.sort(items);
+    return items;
   }
 
   @Override
   public void addNewInProgressItem(String description) {
-    items.add(new TodoItem(description, counter));
-    counter++;
+    items.add(new TodoItem(description, additionCounter));
+    additionCounter++;
   }
 
   @Override
   public void markItemDone(TodoItem item) {
-    item.setStatus(STATUS.DONE);
+    item.setDone( doneCounter);
+    doneCounter++;
   }
 
   @Override
   public void markItemInProgress(TodoItem item) {
-    item.setStatus(STATUS.IN_PROGRESS);
+    item.setInProgress();
   }
 
   @Override
@@ -44,7 +45,12 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
   }
 
   public void changeStatus(TodoItem item){
-    item.changeStatus();
+    if (item.getStatus() == STATUS.DONE){
+      markItemInProgress(item);
+    }
+    else {
+      markItemDone(item);
+    }
   }
 
 }

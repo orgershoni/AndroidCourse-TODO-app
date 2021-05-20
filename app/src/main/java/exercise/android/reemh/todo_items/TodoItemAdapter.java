@@ -6,6 +6,7 @@ import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoSingleItemHolder> 
 
     OnCheckClickCallback onCheckClickCallback;
     OnDeleteClickCallback onDeleteClickCallback;
+    OnChangeCallback onChangeCallback;
 
 
     void setItems(List<TodoItem> items){
@@ -44,34 +46,25 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoSingleItemHolder> 
 
         TodoItem item = items.get(position);
         holder.checkBox.setText(item.getDescription());
-        holder.checkBox.setChecked(item.getStatus() == STATUS.DONE);
+        renderCheckBox(holder.checkBox, item.getStatus());
 
         holder.checkBox.setOnClickListener((View v)-> {
-            if (onCheckClickCallback != null)
-            {
-                if (holder.checkBox.getPaint().isStrikeThruText())
-                {
-                    holder.checkBox.setPaintFlags(holder.checkBox.getPaintFlags() &
-                            ~Paint.STRIKE_THRU_TEXT_FLAG);
-                }
-                else
-                {
-                    holder.checkBox.setPaintFlags(holder.checkBox.getPaintFlags() |
-                            Paint.STRIKE_THRU_TEXT_FLAG);
-                }
+
+            checkTheBox((CheckBox) v);
+            if (onCheckClickCallback != null) {
                 onCheckClickCallback.onClick(item);
-                STATUS bool = item.getStatus();
-                holder.checkBox.setChecked(item.getStatus() == STATUS.IN_PROGRESS);
+            }
+            if (onChangeCallback != null) {
+                onChangeCallback.onChange();
             }
         });
 
-        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeleteClickCallback != null)
-                {
-                    onDeleteClickCallback.onClick(item);
-                }
+        holder.deleteButton.setOnClickListener((View v) -> {
+            if (onDeleteClickCallback != null){
+                onDeleteClickCallback.onClick(item);
+            }
+            if (onChangeCallback != null) {
+                onChangeCallback.onChange();
             }
         });
 
@@ -81,5 +74,35 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoSingleItemHolder> 
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    static private void checkTheBox(CheckBox checkBox){
+
+        if (checkBox.isChecked()){
+
+            checkBox.setPaintFlags(checkBox.getPaintFlags() &
+                    ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else{
+            checkBox.setPaintFlags(checkBox.getPaintFlags() |
+                    Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
+        checkBox.setChecked(!checkBox.isChecked());
+    }
+
+    static private void renderCheckBox(CheckBox checkBox, STATUS status){
+
+        boolean isChecked = status == STATUS.DONE;
+        if (isChecked && !checkBox.getPaint().isStrikeThruText()){
+            checkBox.setPaintFlags(checkBox.getPaintFlags() |
+                    Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else if (!isChecked && checkBox.getPaint().isStrikeThruText()){
+            checkBox.setPaintFlags(checkBox.getPaintFlags() &
+                    ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
+        checkBox.setChecked(isChecked);
     }
 }

@@ -1,7 +1,5 @@
 package exercise.android.reemh.todo_items;
 
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
 
 enum STATUS implements Serializable{
@@ -13,12 +11,14 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     private STATUS status = STATUS.IN_PROGRESS;
     private String description;
     private final Integer time_added;
+    private Integer done_time;
 
 
     TodoItem(String desc, int time_added){
        setDescription(desc);
-       setStatus(STATUS.IN_PROGRESS);
+       setInProgress();
        this.time_added = time_added;
+       this.done_time = -1;
     }
 
     void setDescription(String desc){
@@ -30,22 +30,19 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     }
 
     STATUS getStatus(){
-        return STATUS.IN_PROGRESS;
+        return status;
     }
 
-    void setStatus(STATUS toSet){
-        status = toSet;
+    void setInProgress(){
+        status = STATUS.IN_PROGRESS;
+        done_time = -1;
     }
 
-    void changeStatus(){
-
-        if (status == STATUS.IN_PROGRESS){
-            status = STATUS.DONE;
-        }
-        else{
-            status = STATUS.IN_PROGRESS;
-        }
+    void setDone(Integer done_time){
+        status = STATUS.DONE;
+        this.done_time = done_time;
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -69,9 +66,11 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
             }
             return 1;
         }
-        return other.time_added - this.time_added;
+        else if (this.status == STATUS.IN_PROGRESS) {
+            return other.time_added - this.time_added;
+        }
+        else {          // Both items are done
+            return this.done_time - other.done_time;
+        }
     }
-
-
-  // TODO: edit this class as you want
 }
