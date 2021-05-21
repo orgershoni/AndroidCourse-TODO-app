@@ -10,15 +10,17 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
 
     private STATUS status = STATUS.IN_PROGRESS;
     private String description;
-    private final Integer time_added;
-    private Integer done_time;
+    private final Integer timeAdded;
+    private Integer doneItem;
+    static int addedItemsCount = 0;
+    static int doneItemsCount = 0;
 
 
-    TodoItem(String desc, int time_added){
+    TodoItem(String desc){
        setDescription(desc);
        setInProgress();
-       this.time_added = time_added;
-       this.done_time = -1;
+       this.timeAdded = addedItemsCount++;
+       this.doneItem = -1;
     }
 
     void setDescription(String desc){
@@ -35,12 +37,12 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
 
     void setInProgress(){
         status = STATUS.IN_PROGRESS;
-        done_time = -1;
+        doneItem = -1;
     }
 
-    void setDone(Integer done_time){
+    void setDone(){
         status = STATUS.DONE;
-        this.done_time = done_time;
+        this.doneItem = doneItemsCount++;
     }
 
 
@@ -52,7 +54,7 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
             return false;
         }
         TodoItem other = (TodoItem) obj;
-        return time_added.equals(other.time_added);
+        return timeAdded.equals(other.timeAdded);
     }
 
     @Override
@@ -67,10 +69,10 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
             return 1;
         }
         else if (this.status == STATUS.IN_PROGRESS) {
-            return other.time_added - this.time_added;
+            return other.timeAdded - this.timeAdded;
         }
         else {          // Both items are done
-            return this.done_time - other.done_time;
+            return this.doneItem - other.doneItem;
         }
     }
 }

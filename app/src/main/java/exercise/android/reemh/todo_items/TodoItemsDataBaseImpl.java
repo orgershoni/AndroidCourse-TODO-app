@@ -7,13 +7,9 @@ import java.util.List;
 public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   List<TodoItem> items;
-  Integer additionCounter;
-  Integer doneCounter;
 
   TodoItemsDataBaseImpl(){
     items = new ArrayList<>();
-    additionCounter = 0;
-    doneCounter = 0;
   }
 
   @Override
@@ -24,14 +20,12 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   @Override
   public void addNewInProgressItem(String description) {
-    items.add(new TodoItem(description, additionCounter));
-    additionCounter++;
+    items.add(new TodoItem(description));
   }
 
   @Override
   public void markItemDone(TodoItem item) {
-    item.setDone( doneCounter);
-    doneCounter++;
+    item.setDone();
   }
 
   @Override

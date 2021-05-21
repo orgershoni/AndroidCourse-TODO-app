@@ -42,6 +42,33 @@ public class TodoItemsDataBaseImplTest {
   }
 
   @Test
+  public void when_deletingItemNotInHolder_then_ShouldBeDeleted(){
+
+    // setup
+    TodoItemsDataBaseImpl holderUnderTest = new TodoItemsDataBaseImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    holderUnderTest.addNewInProgressItem("do shopping");
+
+    // verify
+    Assert.assertEquals(1, holderUnderTest.getCurrentItems().size());
+
+    TodoItem firstItem =holderUnderTest.getCurrentItems().get(0);
+
+    // delete once
+    holderUnderTest.deleteItem(firstItem);
+    // verify
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // delete twice - nothing should happen
+    holderUnderTest.deleteItem(firstItem);
+
+    // verify
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+  }
+
+  @Test
   public void when_settingItemToDone_then_ItemTypeIsDone(){
 
     // setup
@@ -158,7 +185,6 @@ public class TodoItemsDataBaseImplTest {
     Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
 
     // test
-
     for (int i = 1; i <= 5; i++)
     {
       holderUnderTest.addNewInProgressItem(String.format("item %d", i));
@@ -172,8 +198,63 @@ public class TodoItemsDataBaseImplTest {
     for (int i = 5; i >= 1; i--)
     {
       int j = 5 - i;
-      Assert.assertEquals(holderUnderTest.getCurrentItems().get(j).getDescription(), String.format("item %d", i));
+      Assert.assertEquals(holderUnderTest.getCurrentItems().get(j).getDescription(),
+              String.format("item %d", i));
     }
+  }
+
+  @Test
+  public void when_SettingInProgressItemToBeInProgress_then_NothingHappens(){
+
+    // setup
+    TodoItemsDataBaseImpl holderUnderTest = new TodoItemsDataBaseImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    for (int i = 1; i <= 5; i++)
+    {
+      holderUnderTest.addNewInProgressItem(String.format("item %d", i));
+    }
+
+    TodoItem firstItem = holderUnderTest.getCurrentItems().get(0);
+
+    holderUnderTest.markItemInProgress(firstItem);
+    STATUS statusAfterFirstTry = firstItem.getStatus();
+
+    holderUnderTest.markItemInProgress(firstItem);
+    STATUS statusAfterSecondTry = firstItem.getStatus();
+
+    Assert.assertEquals(statusAfterFirstTry, statusAfterSecondTry);
+
+
+
+  }
+
+  @Test
+  public void DoneItemsAreOrderedFirstDeleted_FirstInList(){
+
+    // setup
+    TodoItemsDataBaseImpl holderUnderTest = new TodoItemsDataBaseImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    for (int i = 1; i <= 5; i++)
+    {
+      holderUnderTest.addNewInProgressItem(String.format("item %d", i));
+    }
+
+    TodoItem firstItem = holderUnderTest.getCurrentItems().get(0);
+    TodoItem secondItem = holderUnderTest.getCurrentItems().get(1);
+    Assert.assertEquals(firstItem.getDescription(), "item 5");
+
+    holderUnderTest.markItemDone(firstItem);  // should be in position 4
+
+    holderUnderTest.markItemDone(secondItem); // Now firstItem should be is position 3,
+    // and secondItem in position 4
+
+    Assert.assertEquals(holderUnderTest.getCurrentItems().get(3).getDescription(), "item 5");
+    Assert.assertEquals(holderUnderTest.getCurrentItems().get(4).getDescription(), "item 4");
+
   }
 
 
