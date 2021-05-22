@@ -8,16 +8,27 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   List<TodoItem> items;
 
+  /**
+   * Initialize an empty items holder
+   */
   TodoItemsDataBaseImpl(){
     items = new ArrayList<>();
   }
 
+  /**
+   * Return the current items sorted by required order
+   * @return
+   */
   @Override
   public List<TodoItem> getCurrentItems() {
     Collections.sort(items);
     return items;
   }
 
+  /**
+   * Add a new item with given description
+   * @param description
+   */
   @Override
   public void addNewInProgressItem(String description) {
     items.add(new TodoItem(description));
@@ -38,6 +49,7 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     items.remove(item);
   }
 
+  @Override
   public void changeStatus(TodoItem item){
     if (item.getStatus() == STATUS.DONE){
       markItemInProgress(item);

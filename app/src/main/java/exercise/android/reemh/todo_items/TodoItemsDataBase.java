@@ -1,7 +1,5 @@
 package exercise.android.reemh.todo_items;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,5 +24,6 @@ public interface TodoItemsDataBase extends Serializable  {
   /** delete the @param item */
   void deleteItem(TodoItem item);
 
+  /** change item's status */
   void changeStatus(TodoItem item);
 }

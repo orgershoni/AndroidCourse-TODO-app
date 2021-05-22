@@ -1,5 +1,6 @@
 package exercise.android.reemh.todo_items;
 
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -113,7 +114,7 @@ public class MainActivityTest extends TestCase {
     Mockito.when(mockHolder.getCurrentItems())
       .thenReturn(itemsReturnedByHolder);
     TodoItem itemInProgress = new TodoItem("do homework");
-    mockHolder.markItemInProgress(itemInProgress);
+    itemInProgress.setInProgress();
     itemsReturnedByHolder.add(itemInProgress);
 
     // test - let the activity think it is being shown
@@ -129,9 +130,10 @@ public class MainActivityTest extends TestCase {
     assertEquals(1, adapter.getItemCount());
 
     // 2. verify that the shown view has a checkbox being not-checked and has a TextView showing the correct description
-    View viewInRecycler = recyclerView.findViewHolderForAdapterPosition(0).itemView;
+    TodoItemHolder viewInRecycler = (TodoItemHolder)recyclerView.findViewHolderForAdapterPosition(0);
 
-    CheckBox checkBoxOfView = viewInRecycler.findViewById(R.id.checkbox);
+    assert viewInRecycler != null;
+    CheckBox checkBoxOfView = viewInRecycler.checkBox;
     Assert.assertFalse(checkBoxOfView.isChecked());
     Assert.assertEquals(checkBoxOfView.getText().toString(), "do homework");
     Assert.assertFalse(checkBoxOfView.getPaint().isStrikeThruText());
@@ -147,7 +149,7 @@ public class MainActivityTest extends TestCase {
     Mockito.when(mockHolder.getCurrentItems())
             .thenReturn(itemsReturnedByHolder);
     TodoItem itemDone = new TodoItem("buy tomatoes");
-    mockHolder.markItemDone(itemDone);
+    itemDone.setDone();
     itemsReturnedByHolder.add(itemDone);
 
     // test - let the activity think it is being shown
@@ -163,11 +165,12 @@ public class MainActivityTest extends TestCase {
     assertEquals(1, adapter.getItemCount());
 
     // 2. verify that the shown view has a checkbox being checked and has a TextView showing the correct description
-    View viewInRecycler = recyclerView.findViewHolderForAdapterPosition(0).itemView;
+    TodoItemHolder viewInRecycler = (TodoItemHolder)recyclerView.findViewHolderForAdapterPosition(0);
 
-    CheckBox checkBoxOfView = viewInRecycler.findViewById(R.id.checkbox);
+    assert viewInRecycler != null;
+    CheckBox checkBoxOfView = viewInRecycler.checkBox;
     Assert.assertTrue(checkBoxOfView.isChecked());
     Assert.assertEquals(checkBoxOfView.getText().toString(), "buy tomatoes");
-    Assert.assertTrue(checkBoxOfView.getPaint().isStrikeThruText());
+
   }
 }

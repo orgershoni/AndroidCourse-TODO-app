@@ -256,8 +256,4 @@ public class TodoItemsDataBaseImplTest {
     Assert.assertEquals(holderUnderTest.getCurrentItems().get(4).getDescription(), "item 4");
 
   }
-
-
-
-  // TODO: add at least 10 more tests to verify correct behavior of your implementation of `TodoItemsHolderImpl` class
 }

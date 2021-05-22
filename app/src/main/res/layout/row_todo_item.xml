@@ -35,7 +35,4 @@
         app:layout_constraintTop_toTopOf="@id/checkbox"
         />
 
-
-    <!-- TODO: edit this file as you want-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>
