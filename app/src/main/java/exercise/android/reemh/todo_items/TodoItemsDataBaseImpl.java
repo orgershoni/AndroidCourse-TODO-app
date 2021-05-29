@@ -8,17 +8,19 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import static exercise.android.reemh.todo_items.TodoItem.TodoItemFromString;
 
 public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
-  List<TodoItem> items = new ArrayList<>();
   Context context;
   SharedPreferences sp;
   private LiveData<List<TodoItem>> liveData;
   private MutableLiveData<List<TodoItem>> mutableLiveData;
+  HashMap<String, TodoItem> itemsMap = new HashMap<>();
 
 
   /**
@@ -48,7 +50,7 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
         TodoItem item = TodoItemFromString(this.sp.getString(todoDesc, ""));
         if (item != null)
         {
-          items.add(item);
+          itemsMap.put(item.getId(), item);
         }
       }
     }
@@ -60,6 +62,7 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
    */
   @Override
   public List<TodoItem> getCurrentItems() {
+    List<TodoItem> items = new ArrayList<>(itemsMap.values());
     Collections.sort(items);
     return items;
   }
@@ -71,51 +74,63 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
   @Override
   public void addNewInProgressItem(String description) {
     TodoItem toAdd = new TodoItem(description);
-    items.add(toAdd);
+    itemsMap.put(toAdd.getId(), toAdd);
 
     updateSP(null, toAdd);
-    mutableLiveData.setValue(items);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
   @Override
   public void markItemDone(TodoItem item) {
 
     TodoItem oldItem = new TodoItem(item);
-    item.setDone();
 
-    updateSP(oldItem, item);
-    mutableLiveData.setValue(items);
+    TodoItem itemInDB = itemsMap.get(item.getId());
+    if (itemInDB != null)
+    {
+      itemInDB.setDone();
+    }
+    updateSP(oldItem, itemInDB);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
   @Override
   public void markItemInProgress(TodoItem item) {
 
     TodoItem oldItem = new TodoItem(item);
-    item.setInProgress();
+    TodoItem itemInDB = itemsMap.get(item.getId());
+    if (itemInDB != null)
+    {
+      itemInDB.setInProgress();
+    }
 
     updateSP(oldItem, item);
-    mutableLiveData.setValue(items);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
   @Override
   public void deleteItem(TodoItem item) {
-    items.remove(item);
+    itemsMap.remove(item.getId());
     updateSP(item, null);
-    mutableLiveData.setValue(items);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
   @Override
   public void changeStatus(TodoItem item){
     TodoItem oldItem = new TodoItem(item);
-    if (item.getStatus() == STATUS.DONE){
-      markItemInProgress(item);
-    }
-    else {
-      markItemDone(item);
+    TodoItem itemInDB = itemsMap.get(item.getId());
+    if (itemInDB != null)
+    {
+      if (itemInDB.getStatus() == STATUS.DONE){
+        markItemInProgress(itemInDB);
+      }
+      else {
+        markItemDone(itemInDB);
+      }
     }
 
-    updateSP(oldItem, item);
-    mutableLiveData.setValue(items);
+    updateSP(oldItem, itemInDB);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
   private void updateSP(TodoItem oldItem, TodoItem newItem)
@@ -138,12 +153,13 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   public void setDescription(TodoItem item, String newDescription) {
     TodoItem oldItem = new TodoItem(item);
-    int idx = items.indexOf(item);
-    if (idx >= 0)
+    TodoItem itemInDB = itemsMap.get(item.getId());
+    if (itemInDB != null)
     {
-      items.get(idx).setDescription(newDescription);
+      itemInDB.setDescription(newDescription);
     }
-    updateSP(oldItem, item);
+    updateSP(oldItem, itemInDB);
+    mutableLiveData.setValue(getCurrentItems());
   }
 
 

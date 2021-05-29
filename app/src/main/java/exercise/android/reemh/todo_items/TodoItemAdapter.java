@@ -76,10 +76,18 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         // On click lister of check box
         holder.checkBox.setOnClickListener((View v)-> {
 
+            checkTheBox(holder.checkBox);
+            if (onCheckClickCallback != null)
+            {
+                onCheckClickCallback.onClick(item);
+            }
+        });
+
+        holder.todoItem.setOnClickListener(v -> {
+
             Intent editTodoIntent = new Intent(v.getContext(), EditItemActivity.class);
             editTodoIntent.putExtra("to_edit", item);
             onTodoClickCallback.onClick(editTodoIntent);
-            onCheckClickCallback.onClick(item);
         });
 
         // On click lister of delete button

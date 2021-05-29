@@ -15,8 +15,6 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     private final Long timeCreated;
     private Long lastModified;
     private Long doneTime;
-    static int addedItemsCount = 0;
-    static int doneItemsCount = 0;
 
     /**
      * Item is initialized with given description and immediately set to IN PROGRESS
@@ -49,6 +47,10 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     }
 
     void setDescription(String desc){
+        if (description != null && !description.equals(desc))
+        {
+            updateLastModified();
+        }
         description = desc;
         updateLastModified();
     }
@@ -66,15 +68,22 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     }
 
     void setInProgress(){
+        if (status != null && !status.equals(STATUS.IN_PROGRESS))
+        {
+            updateLastModified();
+        }
         status = STATUS.IN_PROGRESS;
         doneTime = -1L;  // of item is in progress - set it's doneTime to invalid value (-1)
         updateLastModified();
     }
 
     void setDone(){
+        if (status != null && !status.equals(STATUS.DONE))
+        {
+            updateLastModified();
+        }
         status = STATUS.DONE;
         this.doneTime = System.currentTimeMillis();
-        updateLastModified();
     }
 
     /**
@@ -118,6 +127,11 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
         }
     }
 
+    public String getId()
+    {
+        return timeCreated.toString();
+    }
+
     public String toString(){
 
         return status.name() + "#"
@@ -152,7 +166,7 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
             }
             catch (Exception e)
             {
-                System.out.println("While parsing" + todoSerialized + "raised exception" + e.getMessage());
+                System.out.println("While parsing " + todoSerialized + " raised exception: " + e.getMessage());
                 return null;
             }
         }
