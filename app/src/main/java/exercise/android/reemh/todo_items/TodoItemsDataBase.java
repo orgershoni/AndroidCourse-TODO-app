@@ -1,12 +1,16 @@
 package exercise.android.reemh.todo_items;
 
+import androidx.lifecycle.LiveData;
+
 import java.io.Serializable;
 import java.util.List;
 
 
-public interface TodoItemsDataBase extends Serializable  {
+public interface TodoItemsDataBase extends Serializable {
 
-  /** Get a copy of the current items list */
+  /**
+   * Get a copy of the current items list
+   */
   List<TodoItem> getCurrentItems();
 
   /**
@@ -15,15 +19,25 @@ public interface TodoItemsDataBase extends Serializable  {
    */
   void addNewInProgressItem(String description);
 
-  /** mark the @param item as DONE */
+  /**
+   * mark the @param item as DONE
+   */
   void markItemDone(TodoItem item);
 
-  /** mark the @param item as IN-PROGRESS */
+  /**
+   * mark the @param item as IN-PROGRESS
+   */
   void markItemInProgress(TodoItem item);
 
-  /** delete the @param item */
+  /**
+   * delete the @param item
+   */
   void deleteItem(TodoItem item);
 
-  /** change item's status */
+  /**
+   * change item's status
+   */
   void changeStatus(TodoItem item);
+
+  LiveData<List<TodoItem>> getLiveData();
 }

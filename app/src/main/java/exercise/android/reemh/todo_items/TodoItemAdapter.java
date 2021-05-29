@@ -23,7 +23,6 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
     // Callback functions to support changes done inside a ViewHolder
     OnCheckClickCallback onCheckClickCallback;
     OnDeleteClickCallback onDeleteClickCallback;
-    OnChangeCallback callbackFromAdapter;
 
     /**
      * Set items in adapter and notify data has changed
@@ -81,9 +80,6 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
             if (onCheckClickCallback != null) {
                 onCheckClickCallback.onClick(item);
             }
-            if (callbackFromAdapter != null) {
-                callbackFromAdapter.onChange();
-            }
         });
 
         // On click lister of delete button
@@ -92,9 +88,6 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
             // callback and update data accordingly (no need for UI changes)
             if (onDeleteClickCallback != null){
                 onDeleteClickCallback.onClick(item);
-            }
-            if (callbackFromAdapter != null) {
-                callbackFromAdapter.onChange();
             }
         });
     }

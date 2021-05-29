@@ -1,6 +1,8 @@
 package exercise.android.reemh.todo_items;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
   public TodoItemsDataBase holder = null;
+  private LiveData<List<TodoItem>> todoItemsListLiveData;
 
   // keys for bundle
   private static final String DESCRIPTION  = "description";
@@ -22,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
 
     // Find views
     TextView taskDescView = findViewById(R.id.editTextInsertTask);
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     if (savedInstanceState != null)
     {
       taskDescView.setText(savedInstanceState.getString(DESCRIPTION));
-      holder = (TodoItemsDataBase) savedInstanceState.getSerializable(HOLDER);
+      //holder = (TodoItemsDataBase) savedInstanceState.getSerializable(HOLDER);
     }
     else  // if savedInstanceState == null then app has just launched and text should be empty
     {
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Load holder
     if (holder == null) {
-      holder = new TodoItemsDataBaseImpl();
+      holder = TodoItemsApp.getInstance().getDataBase();
     }
 
     /// Install an Adapter  ///
@@ -51,10 +53,13 @@ public class MainActivity extends AppCompatActivity {
     // set callbacks
     adapter.onCheckClickCallback = (TodoItem todoItem)->holder.changeStatus(todoItem);
     adapter.onDeleteClickCallback = (TodoItem todoItem)-> holder.deleteItem(todoItem);
-    adapter.callbackFromAdapter = () -> adapter.setItems(holder.getCurrentItems());
 
     // feed adapter
     adapter.setItems(holder.getCurrentItems());
+
+    LiveData<List<TodoItem>> listLiveData = holder.getLiveData();
+    listLiveData.observe(this, TodoList-> adapter.setItems(holder.getCurrentItems()));
+
 
 
     // Bind recycler view with adapter and layout manager
@@ -79,6 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
     TextView taskDescView = findViewById(R.id.editTextInsertTask);
     outState.putString(DESCRIPTION, taskDescView.getText().toString());
-    outState.putSerializable(HOLDER, holder);
+    //outState.putSerializable(HOLDER, holder);
   }
 }
