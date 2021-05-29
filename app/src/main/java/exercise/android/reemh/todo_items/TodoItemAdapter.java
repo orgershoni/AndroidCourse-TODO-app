@@ -1,6 +1,7 @@
 package exercise.android.reemh.todo_items;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.nfc.Tag;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
     // Callback functions to support changes done inside a ViewHolder
     OnCheckClickCallback onCheckClickCallback;
     OnDeleteClickCallback onDeleteClickCallback;
+    OnTodoClickCallback onTodoClickCallback;
 
     /**
      * Set items in adapter and notify data has changed
@@ -74,12 +76,10 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         // On click lister of check box
         holder.checkBox.setOnClickListener((View v)-> {
 
-            checkTheBox((CheckBox) v);  // update UI
-
-            // callback and update data accordingly
-            if (onCheckClickCallback != null) {
-                onCheckClickCallback.onClick(item);
-            }
+            Intent editTodoIntent = new Intent(v.getContext(), EditItemActivity.class);
+            editTodoIntent.putExtra("to_edit", item);
+            onTodoClickCallback.onClick(editTodoIntent);
+            onCheckClickCallback.onClick(item);
         });
 
         // On click lister of delete button

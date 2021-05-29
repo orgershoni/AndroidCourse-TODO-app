@@ -28,7 +28,6 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
        setInProgress();
        this.doneTime = -1L;
        this.timeCreated = System.currentTimeMillis();
-       this.lastModified = timeCreated;
     }
 
     TodoItem(STATUS status, Long timeCreated, Long doneTime, Long lastModified, String desc){
@@ -51,10 +50,15 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
 
     void setDescription(String desc){
         description = desc;
+        updateLastModified();
     }
 
     String getDescription(){
         return description;
+    }
+
+    public Long getLastModified() {
+        return lastModified;
     }
 
     STATUS getStatus(){
@@ -64,11 +68,13 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     void setInProgress(){
         status = STATUS.IN_PROGRESS;
         doneTime = -1L;  // of item is in progress - set it's doneTime to invalid value (-1)
+        updateLastModified();
     }
 
     void setDone(){
         status = STATUS.DONE;
         this.doneTime = System.currentTimeMillis();
+        updateLastModified();
     }
 
     /**
@@ -123,6 +129,10 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
 
     public Long getTimeCreated() {
         return timeCreated;
+    }
+
+    private void updateLastModified(){
+        lastModified = System.currentTimeMillis();
     }
 
     public static TodoItem TodoItemFromString(String todoSerialized){

@@ -39,5 +39,9 @@ public interface TodoItemsDataBase extends Serializable {
    */
   void changeStatus(TodoItem item);
 
+
   LiveData<List<TodoItem>> getLiveData();
+
+  void setDescription(TodoItem item, String newDescription);
+
 }

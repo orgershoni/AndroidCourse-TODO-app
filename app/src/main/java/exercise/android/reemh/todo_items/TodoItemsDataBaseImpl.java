@@ -136,4 +136,15 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
   }
 
+  public void setDescription(TodoItem item, String newDescription) {
+    TodoItem oldItem = new TodoItem(item);
+    int idx = items.indexOf(item);
+    if (idx >= 0)
+    {
+      items.get(idx).setDescription(newDescription);
+    }
+    updateSP(oldItem, item);
+  }
+
+
 }
