@@ -10,9 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-import static exercise.android.reemh.todo_items.TodoItem.TodoItemFromString;
+import static exercise.android.reemh.todo_items.TodoItem.ParseFromString;
 
 public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
 
@@ -34,20 +33,25 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     this.liveData = this.mutableLiveData;
 
     initializeFromSP();
-
   }
 
+  /**
+   * LiveData getter
+   */
   public LiveData<List<TodoItem>> getLiveData() {
     return liveData;
   }
 
+  /**
+   * similar implementation to what we saw in TA - fill in itemsMap with data from SP
+   */
   private void initializeFromSP()
   {
     if (this.sp != null)
     {
       for (String todoDesc : this.sp.getAll().keySet())
       {
-        TodoItem item = TodoItemFromString(this.sp.getString(todoDesc, ""));
+        TodoItem item = ParseFromString(this.sp.getString(todoDesc, ""));
         if (item != null)
         {
           itemsMap.put(item.getId(), item);
@@ -56,10 +60,6 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     }
   }
 
-  /**
-   * Return the current items sorted by required order
-   * @return
-   */
   @Override
   public List<TodoItem> getCurrentItems() {
     List<TodoItem> items = new ArrayList<>(itemsMap.values());
@@ -67,15 +67,12 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     return items;
   }
 
-  /**
-   * Add a new item with given description
-   * @param description
-   */
   @Override
   public void addNewInProgressItem(String description) {
     TodoItem toAdd = new TodoItem(description);
     itemsMap.put(toAdd.getId(), toAdd);
 
+    // update SP and notify LiveData
     updateSP(null, toAdd);
     mutableLiveData.setValue(getCurrentItems());
   }
@@ -90,6 +87,8 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     {
       itemInDB.setDone();
     }
+
+    // update SP and notify LiveData
     updateSP(oldItem, itemInDB);
     mutableLiveData.setValue(getCurrentItems());
   }
@@ -104,6 +103,7 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
       itemInDB.setInProgress();
     }
 
+    // update SP and notify LiveData
     updateSP(oldItem, item);
     mutableLiveData.setValue(getCurrentItems());
   }
@@ -111,6 +111,8 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
   @Override
   public void deleteItem(TodoItem item) {
     itemsMap.remove(item.getId());
+
+    // update SP and notify LiveData
     updateSP(item, null);
     mutableLiveData.setValue(getCurrentItems());
   }
@@ -129,26 +131,9 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
       }
     }
 
+    // update SP and notify LiveData
     updateSP(oldItem, itemInDB);
     mutableLiveData.setValue(getCurrentItems());
-  }
-
-  private void updateSP(TodoItem oldItem, TodoItem newItem)
-  {
-    SharedPreferences.Editor editor = sp.edit();
-    if (newItem == null)
-    {
-      editor.remove(oldItem.getTimeCreated().toString());
-      return;
-    }
-
-    if (oldItem != null)
-    {
-      editor.remove(oldItem.getTimeCreated().toString());
-    }
-    editor.putString(newItem.getTimeCreated().toString(), newItem.toString());
-    editor.apply();
-
   }
 
   public void setDescription(TodoItem item, String newDescription) {
@@ -158,9 +143,31 @@ public class TodoItemsDataBaseImpl implements TodoItemsDataBase {
     {
       itemInDB.setDescription(newDescription);
     }
+
+    // update SP and notify LiveData
     updateSP(oldItem, itemInDB);
     mutableLiveData.setValue(getCurrentItems());
   }
 
+  /**
+   * Remove old object from SP and inserting a new one instead
+   */
+  private void updateSP(TodoItem oldItem, TodoItem newItem)
+  {
+    SharedPreferences.Editor editor = sp.edit();
+    if (newItem == null)  // if new item is null it means the item was deleted
+    {
+      editor.remove(oldItem.getTimeCreated().toString());
+      return;
+    }
 
+    if (oldItem != null)  // if an old item is null it means newItem is a new item in the DB
+    {
+      editor.remove(oldItem.getTimeCreated().toString());
+    }
+
+    editor.putString(newItem.getTimeCreated().toString(), newItem.toString());
+    editor.apply();
+
+  }
 }

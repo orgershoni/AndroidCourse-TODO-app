@@ -37,20 +37,20 @@ public class MainActivity extends AppCompatActivity {
     if (savedInstanceState != null)
     {
       taskDescView.setText(savedInstanceState.getString(DESCRIPTION));
-      //holder = (TodoItemsDataBase) savedInstanceState.getSerializable(HOLDER);
     }
     else  // if savedInstanceState == null then app has just launched and text should be empty
     {
       taskDescView.setText("");
     }
 
-    // Load holder
+    // Load holder from TodoItemsApp
     if (holder == null) {
       holder = TodoItemsApp.getInstance().getDataBase();
     }
 
     /// Install an Adapter  ///
     TodoItemAdapter adapter = new TodoItemAdapter();
+
     // set callbacks
     adapter.onCheckClickCallback = (TodoItem todoItem)->holder.changeStatus(todoItem);
     adapter.onDeleteClickCallback = (TodoItem todoItem)-> holder.deleteItem(todoItem);
@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
     // feed adapter
     adapter.setItems(holder.getCurrentItems());
 
+    // Install live data listener
     LiveData<List<TodoItem>> listLiveData = holder.getLiveData();
     listLiveData.observe(this, TodoList-> adapter.setItems(holder.getCurrentItems()));
-
 
 
     // Bind recycler view with adapter and layout manager
@@ -86,6 +86,5 @@ public class MainActivity extends AppCompatActivity {
 
     TextView taskDescView = findViewById(R.id.editTextInsertTask);
     outState.putString(DESCRIPTION, taskDescView.getText().toString());
-    //outState.putSerializable(HOLDER, holder);
   }
 }

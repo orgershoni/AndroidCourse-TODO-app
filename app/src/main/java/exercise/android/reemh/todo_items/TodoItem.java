@@ -1,6 +1,7 @@
 package exercise.android.reemh.todo_items;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,50 +27,89 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
        setInProgress();
        this.doneTime = -1L;
        this.timeCreated = System.currentTimeMillis();
+       // lastModified value is being updated in the setter functions
     }
 
+    /**
+     * Raw constructor (for deserializing)
+     */
     TodoItem(STATUS status, Long timeCreated, Long doneTime, Long lastModified, String desc){
 
-        setDescription(desc);
+        this.description = desc;
         this.status = status;
         this.timeCreated = timeCreated;
         this.doneTime = doneTime;
         this.lastModified = lastModified;
     }
 
+    /**
+     * Copy constructor
+     * @param other
+     */
     public TodoItem(TodoItem other) {
 
         this.status = other.getStatus();
-        this.timeCreated = other.timeCreated;
-        this.doneTime = other.doneTime;
+        this.timeCreated = other.getTimeCreated();
+        this.doneTime = other.getDoneTime();
         this.description = other.getDescription();
-        this.lastModified = other.lastModified;
+        this.lastModified = other.getLastModified();
     }
 
-    void setDescription(String desc){
-        if (description != null && !description.equals(desc))
-        {
-            updateLastModified();
-        }
-        description = desc;
-        updateLastModified();
-    }
 
+    /**
+     * getter function for item's description
+     * @return
+     */
     String getDescription(){
         return description;
     }
 
+    /**
+     * getter function for item's last modified value
+     * @return
+     */
     public Long getLastModified() {
         return lastModified;
     }
 
+    /**
+     * getter function for item's status
+     * @return
+     */
     STATUS getStatus(){
         return status;
     }
 
+    /**
+     * Item's unique ID can be it's creation time
+     * @return
+     */
+    public String getId()
+    {
+        return timeCreated.toString();
+    }
+
+    /**
+     * getter function for item's timeCreated
+     */
+    public Long getTimeCreated() {
+        return timeCreated;
+    }
+
+    /**
+     * getter function for item's doneTime
+     */
+    public Long getDoneTime() {
+        return doneTime;
+    }
+
+    /**
+     * Set item to be in status IN PROGRESS
+     */
     void setInProgress(){
         if (status != null && !status.equals(STATUS.IN_PROGRESS))
         {
+            // checks that status was indeed modified
             updateLastModified();
         }
         status = STATUS.IN_PROGRESS;
@@ -80,10 +120,31 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     void setDone(){
         if (status != null && !status.equals(STATUS.DONE))
         {
+            // checks that status was indeed modified
             updateLastModified();
         }
         status = STATUS.DONE;
         this.doneTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Set item's description
+     * @param desc
+     */
+    void setDescription(String desc){
+        if (description != null && !description.equals(desc))
+        {
+            // checks that description was indeed modified
+            updateLastModified();
+        }
+        description = desc;
+    }
+
+    /**
+     * Update item's last modified time
+     */
+    private void updateLastModified(){
+        lastModified = System.currentTimeMillis();
     }
 
     /**
@@ -111,7 +172,7 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
     public int compareTo(TodoItem other){
 
         if (this.status != other.status)            // If 2 instances dont share the same status
-                                                    // - in progress is "smaller"
+        // - in progress is "smaller"
         {
             if (this.status == STATUS.IN_PROGRESS)
             {
@@ -127,11 +188,10 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
         }
     }
 
-    public String getId()
-    {
-        return timeCreated.toString();
-    }
 
+    /**
+     * Serialize item's data members to a string object, fields are separated by #
+     */
     public String toString(){
 
         return status.name() + "#"
@@ -141,15 +201,10 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
                 + description;
     }
 
-    public Long getTimeCreated() {
-        return timeCreated;
-    }
-
-    private void updateLastModified(){
-        lastModified = System.currentTimeMillis();
-    }
-
-    public static TodoItem TodoItemFromString(String todoSerialized){
+    /**
+     * Parse a TodoItem from a string (reverse .toString() method)
+     */
+    public static TodoItem ParseFromString(String todoSerialized){
 
         Pattern todoPattern = Pattern.compile("(\\w+)#(\\d+)#(-?\\d+)#(\\d+)#(.*)");
         Matcher matcher = todoPattern.matcher(todoSerialized);
@@ -170,7 +225,6 @@ public class TodoItem implements Serializable, Comparable<TodoItem> {
                 return null;
             }
         }
-
         return null;
     }
 }

@@ -27,7 +27,7 @@
         android:id="@+id/edit_desc"
         >
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/colored_rect_with_rounded_corners"
@@ -43,7 +43,7 @@
         android:id="@+id/date_created"
         >
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/colored_rect_with_rounded_corners"
@@ -60,7 +60,7 @@
         android:id="@+id/last_modified"
         >
 
-        <com.google.android.material.textfield.TextInputEditText
+        <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/colored_rect_with_rounded_corners"

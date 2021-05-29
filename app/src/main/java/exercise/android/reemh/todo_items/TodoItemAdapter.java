@@ -73,7 +73,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         // Set information inside the checkbox
         renderCheckBox(holder.checkBox, item.getStatus());
 
-        // On click lister of check box
+        // On click listener of check box
         holder.checkBox.setOnClickListener((View v)-> {
 
             checkTheBox(holder.checkBox);
@@ -83,6 +83,7 @@ public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemHolder> {
             }
         });
 
+        // On click listener of todoItem (creates a new intent and open a new activity with a callback)
         holder.todoItem.setOnClickListener(v -> {
 
             Intent editTodoIntent = new Intent(v.getContext(), EditItemActivity.class);

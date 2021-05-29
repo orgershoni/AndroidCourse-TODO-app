@@ -2,6 +2,9 @@ package exercise.android.reemh.todo_items;
 
 import android.app.Application;
 
+/**
+ * Native singleton class to hold the TodoItems DB
+ */
 public class TodoItemsApp extends Application {
 
     TodoItemsDataBase dataBase;
